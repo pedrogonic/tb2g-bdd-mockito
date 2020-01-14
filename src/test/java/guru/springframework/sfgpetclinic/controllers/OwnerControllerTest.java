@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerControllerTest {
@@ -69,11 +71,12 @@ class OwnerControllerTest {
         Owner owner = new Owner(1l, "Joe", "Buck");
 
         // when
-        String viewName = ownerController.processFindForm(owner, bindingResult, null);
+        String viewName = ownerController.processFindForm(owner, bindingResult, model);
 
         // then
         assertThat("%Buck%").isEqualToIgnoringCase(captor.getValue());
         assertThat("redirect:/owners/1").isEqualToIgnoringCase(viewName);
+        verifyZeroInteractions(model);
     }
 
     @Test
@@ -83,6 +86,8 @@ class OwnerControllerTest {
 
         // when
         String viewName = ownerController.processFindForm(owner, bindingResult, null);
+
+        // verifyNoMoreInteractions(ownerService);  // this fails the test, don't know why
 
         // then
         assertThat("%Dontfindme%").isEqualToIgnoringCase(captor.getValue());
@@ -105,6 +110,7 @@ class OwnerControllerTest {
         // inOrder asserts
         inOrder.verify(ownerService).findAllByLastNameLike(anyString());
         inOrder.verify(model).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(model);
     }
 
     @Test
