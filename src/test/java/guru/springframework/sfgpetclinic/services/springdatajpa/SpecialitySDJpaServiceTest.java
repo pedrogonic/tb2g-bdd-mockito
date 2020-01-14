@@ -47,12 +47,10 @@ class SpecialitySDJpaServiceTest {
         // when
         Speciality foundSpecialty = service.findById(1L);
 
-        assertThat(foundSpecialty).isNotNull();
-
 
         // then
         assertThat(foundSpecialty).isNotNull();
-        then(specialtyRepository).should().findById(anyLong());
+        then(specialtyRepository).should(timeout(100)).findById(anyLong());
         then(specialtyRepository).shouldHaveNoMoreInteractions();
     }
 
@@ -65,7 +63,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1l);
 
         // then
-        then(specialtyRepository).should(times(2)).deleteById(1L);
+        then(specialtyRepository).should(timeout(100).times(2)).deleteById(1L);
     }
 
     @Test
@@ -77,7 +75,7 @@ class SpecialitySDJpaServiceTest {
         service.deleteById(1l);
 
         // then
-        then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+        then(specialtyRepository).should(timeout(1000).atLeastOnce()).deleteById(1L);
     }
 
     @Test
